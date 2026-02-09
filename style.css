@@ -40,7 +40,7 @@ body {
     pointer-events: none;
 }
 
-/* Header */
+/* Header - Smaller size */
 header {
     position: fixed;
     top: 0;
@@ -56,13 +56,13 @@ nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
+    padding: 0.6rem 2rem;
     max-width: 1400px;
     margin: 0 auto;
 }
 
 .logo {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: bold;
     background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
     -webkit-background-clip: text;
@@ -80,6 +80,7 @@ nav {
     text-decoration: none;
     color: var(--text-dark);
     font-weight: 500;
+    font-size: 0.95rem;
     transition: color 0.3s ease;
     position: relative;
 }
@@ -103,16 +104,17 @@ nav {
     color: var(--primary-color);
 }
 
+/* Hamburger - Smaller size */
 .hamburger {
     display: none;
     flex-direction: column;
     cursor: pointer;
-    gap: 5px;
+    gap: 4px;
 }
 
 .hamburger span {
-    width: 25px;
-    height: 3px;
+    width: 22px;
+    height: 2.5px;
     background: var(--text-dark);
     transition: all 0.3s ease;
 }
@@ -128,6 +130,7 @@ nav {
     text-align: center;
     color: white;
     padding: 2rem;
+    padding-top: 80px;
     position: relative;
 }
 
@@ -816,7 +819,7 @@ footer {
     .nav-links {
         position: fixed;
         right: -100%;
-        top: 70px;
+        top: 55px;
         flex-direction: column;
         background: white;
         width: 100%;
