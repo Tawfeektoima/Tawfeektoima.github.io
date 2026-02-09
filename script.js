@@ -1,4 +1,4 @@
-// Computer Vision Interactive Canvas
+// Computer Vision Interactive Canvas - Particles Only
 const canvas = document.getElementById('cvCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -109,99 +109,6 @@ function connectParticles() {
     }
 }
 
-// Detection box effect (mimicking object detection)
-class DetectionBox {
-    constructor() {
-        this.reset();
-    }
-
-    reset() {
-        this.x = Math.random() * (canvas.width - 100);
-        this.y = Math.random() * (canvas.height - 100);
-        this.width = Math.random() * 80 + 40;
-        this.height = Math.random() * 80 + 40;
-        this.opacity = 0;
-        this.growing = true;
-        this.life = 0;
-        this.maxLife = Math.random() * 200 + 100;
-        this.label = ['Object', 'Feature', 'Pattern', 'Edge'][Math.floor(Math.random() * 4)];
-        this.confidence = (Math.random() * 0.3 + 0.7).toFixed(2);
-    }
-
-    update() {
-        this.life++;
-
-        if (this.growing && this.opacity < 1) {
-            this.opacity += 0.02;
-        }
-
-        if (this.life > this.maxLife) {
-            this.opacity -= 0.02;
-        }
-
-        if (this.opacity <= 0) {
-            this.reset();
-        }
-    }
-
-    draw() {
-        // Bounding box
-        ctx.strokeStyle = `rgba(34, 211, 238, ${this.opacity * 0.8})`;
-        ctx.lineWidth = 2;
-        ctx.strokeRect(this.x, this.y, this.width, this.height);
-
-        // Label background
-        ctx.fillStyle = `rgba(34, 211, 238, ${this.opacity * 0.9})`;
-        const labelText = `${this.label} ${this.confidence}`;
-        ctx.font = '12px Arial';
-        const textWidth = ctx.measureText(labelText).width;
-        ctx.fillRect(this.x, this.y - 20, textWidth + 10, 18);
-
-        // Label text
-        ctx.fillStyle = `rgba(15, 23, 42, ${this.opacity})`;
-        ctx.fillText(labelText, this.x + 5, this.y - 7);
-
-        // Corner markers
-        const cornerSize = 10;
-        ctx.strokeStyle = `rgba(251, 191, 36, ${this.opacity})`;
-        ctx.lineWidth = 3;
-
-        // Top-left
-        ctx.beginPath();
-        ctx.moveTo(this.x, this.y + cornerSize);
-        ctx.lineTo(this.x, this.y);
-        ctx.lineTo(this.x + cornerSize, this.y);
-        ctx.stroke();
-
-        // Top-right
-        ctx.beginPath();
-        ctx.moveTo(this.x + this.width - cornerSize, this.y);
-        ctx.lineTo(this.x + this.width, this.y);
-        ctx.lineTo(this.x + this.width, this.y + cornerSize);
-        ctx.stroke();
-
-        // Bottom-left
-        ctx.beginPath();
-        ctx.moveTo(this.x, this.y + this.height - cornerSize);
-        ctx.lineTo(this.x, this.y + this.height);
-        ctx.lineTo(this.x + cornerSize, this.y + this.height);
-        ctx.stroke();
-
-        // Bottom-right
-        ctx.beginPath();
-        ctx.moveTo(this.x + this.width - cornerSize, this.y + this.height);
-        ctx.lineTo(this.x + this.width, this.y + this.height);
-        ctx.lineTo(this.x + this.width, this.y + this.height - cornerSize);
-        ctx.stroke();
-    }
-}
-
-// Create detection boxes
-const detectionBoxes = [];
-for (let i = 0; i < 3; i++) {
-    detectionBoxes.push(new DetectionBox());
-}
-
 // Object counter
 let objectCount = 0;
 const objectCountElement = document.getElementById('objectsDetected');
@@ -231,12 +138,6 @@ function animate() {
     // Connect particles
     connectParticles();
 
-    // Update and draw detection boxes
-    for (let i = 0; i < detectionBoxes.length; i++) {
-        detectionBoxes[i].update();
-        detectionBoxes[i].draw();
-    }
-
     requestAnimationFrame(animate);
 }
 
@@ -265,7 +166,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
-            const headerOffset = 80;
+            const headerOffset = 60;
             const elementPosition = target.offsetTop;
             const offsetPosition = elementPosition - headerOffset;
 
@@ -286,10 +187,10 @@ window.addEventListener('scroll', () => {
 
     if (currentScroll > 100) {
         header.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.15)';
-        header.style.padding = '0.8rem 0';
+        header.style.padding = '0.5rem 0';
     } else {
         header.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.1)';
-        header.style.padding = '1rem 0';
+        header.style.padding = '0.6rem 0';
     }
 
     lastScroll = currentScroll;
