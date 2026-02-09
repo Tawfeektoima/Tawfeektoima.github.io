@@ -1,3 +1,247 @@
+// Computer Vision Interactive Canvas
+const canvas = document.getElementById('cvCanvas');
+const ctx = canvas.getContext('2d');
+
+// Set canvas size
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Particle system for Computer Vision effect
+class Particle {
+    constructor() {
+        this.reset();
+        this.y = Math.random() * canvas.height;
+        this.fadeDelay = Math.random() * 600 + 100;
+        this.fadeStart = Date.now() + this.fadeDelay;
+        this.fadingOut = false;
+    }
+
+    reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.z = Math.random() * 4;
+        this.size = this.z * 2;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.opacity = 0;
+        this.fadeDelay = Math.random() * 600 + 100;
+        this.fadeStart = Date.now() + this.fadeDelay;
+        this.fadingOut = false;
+    }
+
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        const now = Date.now();
+        if (now > this.fadeStart) {
+            if (this.opacity < 1 && !this.fadingOut) {
+                this.opacity += 0.01;
+            }
+        }
+
+        if (this.opacity >= 1) {
+            this.fadingOut = true;
+        }
+
+        if (this.fadingOut) {
+            this.opacity -= 0.005;
+        }
+
+        if (this.opacity <= 0 && this.fadingOut) {
+            this.reset();
+        }
+
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+    }
+
+    draw() {
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity * 0.8})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+// Create particles
+const particlesArray = [];
+const numberOfParticles = 80;
+
+for (let i = 0; i < numberOfParticles; i++) {
+    particlesArray.push(new Particle());
+}
+
+// Mouse interaction
+let mouse = {
+    x: null,
+    y: null,
+    radius: 150
+};
+
+window.addEventListener('mousemove', (e) => {
+    mouse.x = e.x;
+    mouse.y = e.y;
+});
+
+// Connect particles (Computer Vision network effect)
+function connectParticles() {
+    for (let a = 0; a < particlesArray.length; a++) {
+        for (let b = a; b < particlesArray.length; b++) {
+            const dx = particlesArray[a].x - particlesArray[b].x;
+            const dy = particlesArray[a].y - particlesArray[b].y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 100) {
+                const opacity = (1 - distance / 100) * Math.min(particlesArray[a].opacity, particlesArray[b].opacity);
+                ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.3})`;
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                ctx.stroke();
+            }
+        }
+    }
+}
+
+// Detection box effect (mimicking object detection)
+class DetectionBox {
+    constructor() {
+        this.reset();
+    }
+
+    reset() {
+        this.x = Math.random() * (canvas.width - 100);
+        this.y = Math.random() * (canvas.height - 100);
+        this.width = Math.random() * 80 + 40;
+        this.height = Math.random() * 80 + 40;
+        this.opacity = 0;
+        this.growing = true;
+        this.life = 0;
+        this.maxLife = Math.random() * 200 + 100;
+        this.label = ['Object', 'Feature', 'Pattern', 'Edge'][Math.floor(Math.random() * 4)];
+        this.confidence = (Math.random() * 0.3 + 0.7).toFixed(2);
+    }
+
+    update() {
+        this.life++;
+
+        if (this.growing && this.opacity < 1) {
+            this.opacity += 0.02;
+        }
+
+        if (this.life > this.maxLife) {
+            this.opacity -= 0.02;
+        }
+
+        if (this.opacity <= 0) {
+            this.reset();
+        }
+    }
+
+    draw() {
+        // Bounding box
+        ctx.strokeStyle = `rgba(34, 211, 238, ${this.opacity * 0.8})`;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(this.x, this.y, this.width, this.height);
+
+        // Label background
+        ctx.fillStyle = `rgba(34, 211, 238, ${this.opacity * 0.9})`;
+        const labelText = `${this.label} ${this.confidence}`;
+        ctx.font = '12px Arial';
+        const textWidth = ctx.measureText(labelText).width;
+        ctx.fillRect(this.x, this.y - 20, textWidth + 10, 18);
+
+        // Label text
+        ctx.fillStyle = `rgba(15, 23, 42, ${this.opacity})`;
+        ctx.fillText(labelText, this.x + 5, this.y - 7);
+
+        // Corner markers
+        const cornerSize = 10;
+        ctx.strokeStyle = `rgba(251, 191, 36, ${this.opacity})`;
+        ctx.lineWidth = 3;
+
+        // Top-left
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y + cornerSize);
+        ctx.lineTo(this.x, this.y);
+        ctx.lineTo(this.x + cornerSize, this.y);
+        ctx.stroke();
+
+        // Top-right
+        ctx.beginPath();
+        ctx.moveTo(this.x + this.width - cornerSize, this.y);
+        ctx.lineTo(this.x + this.width, this.y);
+        ctx.lineTo(this.x + this.width, this.y + cornerSize);
+        ctx.stroke();
+
+        // Bottom-left
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y + this.height - cornerSize);
+        ctx.lineTo(this.x, this.y + this.height);
+        ctx.lineTo(this.x + cornerSize, this.y + this.height);
+        ctx.stroke();
+
+        // Bottom-right
+        ctx.beginPath();
+        ctx.moveTo(this.x + this.width - cornerSize, this.y + this.height);
+        ctx.lineTo(this.x + this.width, this.y + this.height);
+        ctx.lineTo(this.x + this.width, this.y + this.height - cornerSize);
+        ctx.stroke();
+    }
+}
+
+// Create detection boxes
+const detectionBoxes = [];
+for (let i = 0; i < 3; i++) {
+    detectionBoxes.push(new DetectionBox());
+}
+
+// Object counter
+let objectCount = 0;
+const objectCountElement = document.getElementById('objectsDetected');
+
+function incrementObjectCount() {
+    if (objectCount < 150) {
+        objectCount++;
+        if (objectCountElement) {
+            objectCountElement.textContent = objectCount;
+        }
+    }
+}
+
+// Increment counter periodically
+setInterval(incrementObjectCount, 100);
+
+// Animation loop
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Update and draw particles
+    for (let i = 0; i < particlesArray.length; i++) {
+        particlesArray[i].update();
+        particlesArray[i].draw();
+    }
+
+    // Connect particles
+    connectParticles();
+
+    // Update and draw detection boxes
+    for (let i = 0; i < detectionBoxes.length; i++) {
+        detectionBoxes[i].update();
+        detectionBoxes[i].draw();
+    }
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+
 // Hamburger Menu Toggle
 const hamburger = document.getElementById('hamburger');
 const navLinks = document.getElementById('navLinks');
@@ -74,24 +318,15 @@ document.querySelectorAll('.project-card, .skill-category, .contact-item, .timel
     fadeInObserver.observe(el);
 });
 
-// Contact Form Submission
+// Contact Form - Formspree handles submission automatically
 const contactForm = document.getElementById('contactForm');
-contactForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    // Show success message
-    const button = contactForm.querySelector('button');
-    const originalText = button.textContent;
-    button.textContent = 'Message Sent! ✓';
-    button.style.background = '#10b981';
-
-    // Reset form
-    setTimeout(() => {
-        contactForm.reset();
-        button.textContent = originalText;
-        button.style.background = '';
-    }, 3000);
-});
+if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+        const button = contactForm.querySelector('button');
+        button.textContent = 'Sending...';
+        button.disabled = true;
+    });
+}
 
 // Animated title rotation
 const title = document.querySelector('.title-animation');
