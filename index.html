@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- Computer Vision Interactive Canvas -->
+    <canvas id="cvCanvas"></canvas>
+
     <!-- Header -->
     <header id="header">
         <nav>
@@ -33,7 +36,7 @@
         <div class="home-content">
             <h1>Hi, I'm <span class="name">Tawfeek Toima</span></h1>
             <h2 class="title-animation">Computer Vision Engineer</h2>
-            <p>Specialized in AI, Deep Learning, and 3D Computer Vision</p>
+            <p>Specialized in AI, Deep Learning, and Computer Vision</p>
             <div class="home-buttons">
                 <a href="#projects" class="btn btn-primary">View Projects</a>
                 <a href="#contact" class="btn btn-secondary">Get in Touch</a>
@@ -42,6 +45,25 @@
                 <a href="https://github.com/Tawfeektoima" target="_blank"><i class="fab fa-github"></i></a>
                 <a href="https://www.linkedin.com/in/tawfeek-toima-82a28b217" target="_blank"><i class="fab fa-linkedin"></i></a>
                 <a href="mailto:engtawfeek111@gmail.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
+
+        <!-- CV Stats Display -->
+        <div class="cv-stats">
+            <div class="stat-item">
+                <i class="fas fa-eye"></i>
+                <span class="stat-label">Objects Detected</span>
+                <span class="stat-value" id="objectsDetected">0</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-project-diagram"></i>
+                <span class="stat-label">Neural Networks</span>
+                <span class="stat-value">4+</span>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-brain"></i>
+                <span class="stat-label">AI Models</span>
+                <span class="stat-value">10+</span>
             </div>
         </div>
     </section>
@@ -57,7 +79,7 @@
                     <div class="about-info">
                         <div class="info-item">
                             <i class="fas fa-map-marker-alt"></i>
-                            <span>Alexandria, Egypt</span>
+                            <span>Cairo, Egypt</span>
                         </div>
                         <div class="info-item">
                             <i class="fas fa-graduation-cap"></i>
@@ -383,11 +405,12 @@
                         </div>
                     </div>
                 </div>
-                <form class="contact-form" id="contactForm">
+                <form class="contact-form" id="contactForm" action="https://formspree.io/f/xdalkagz" method="POST">
                     <h3>Send me a message</h3>
-                    <input type="text" placeholder="Your Name" required>
-                    <input type="email" placeholder="Your Email" required>
-                    <textarea placeholder="Your Message" rows="6" required></textarea>
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <input type="email" name="_replyto" placeholder="Your Email" required>
+                    <textarea name="message" placeholder="Your Message" rows="6" required></textarea>
+                    <input type="hidden" name="_subject" value="New message from Portfolio Website">
                     <button type="submit" class="btn btn-primary">Send Message</button>
                 </form>
             </div>
